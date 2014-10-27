@@ -128,12 +128,12 @@ class UpcRobot {
 		// 时间格式：2014-01-01
         
         // 抓取文本
-		$url = ''
+		$url = 'http://card.upc.edu.cn/CardManage/CardInfo/TrjnList?';
 		if (!empty($startTime)) {
-			
-			$first = $this->mReader->read('http://card.upc.edu.cn/CardManage/CardInfo/TrjnList?beginTime='.$startTime.'&endTime='.$endTime.'&type=1');
+			$url .= 'beginTime='.$startTime.'&endTime='.$endTime.'&type=1&';
+			$first = $this->mReader->read($url);
 		} else {
-			$first = $this->mReader->read('http://card.upc.edu.cn/CardManage/CardInfo/TrjnList');
+			$first = $this->mReader->read($url);
 		}
 
 		// 判断是否没有流水
@@ -145,24 +145,36 @@ class UpcRobot {
 		// 页数 = 流水数 / 10
 		$first = str_replace("\n", '', $first);
 		$first = str_replace("\r", '', $first);
-		$count = $this->extract('#<td colspan="5">.*?(\d.*?)\s*?</td>#', $first);
-		return $pages;
-
-		$pages = $count / 10;
+		// TODO 正则表达式不支持中文？拿结束时间顶一下（所以结束时间格式必须正确）
+		$count = (int) $this->extract('#<td colspan="5">.*?'.$endTime.'.*?(\d.*?)\s*?</td>#', $first);
+		$pages = (int)(($count+9) / 10);
 
 		$r = array();
+
 		for ($i = 1; $i <= $pages; $i++) {
-			$txt = 
-			// extract
-			// array_push
+		    // 注意：$url后面已经带 ? 和 & 了。
+			$txt = $this->mReader->read($url.'pageindex='.$i);
+		    $txt = str_replace("\n", '', $txt);
+		    $txt = str_replace("\r", '', $txt);
+		    $txt = strstr($txt, '总记录数为');
 			
+			preg_match_all('#<tr.*?td>(.*?)</td.*?td>(.*?)</td.*?td>(.*?)</td.*?red">(.*?)</s.*?ue">(.*?)</s.*?/tr>#', $txt, $m);
+			
+			$n = count($m[0]);
+			
+			for ($j = 0; $j < $n; $j++) {
+			    $x = '';
+			    $x['time'] = trim($m[1][$j]);
+			    $x['shop'] = trim($m[2][$j]);
+			    $x['reason'] = trim($m[3][$j]);
+			    $x['value'] = trim($m[4][$j]);
+			    $x['total'] = trim($m[5][$j]);
+			    
+			    array_push($r, $x);
+			}
 		}
 
-        // TODO 判断是“无流水”还是“错误”
-        
-        // http://card.upc.edu.cn/CardManage/CardInfo/TrjnList?beginTime=2014-07-01&endTime=2014-08-01&type=1
-        // 如果页码太多，还有 &pageindex=2……
-        return $this->mReader->read('http://card.upc.edu.cn/CardManage/CardInfo/TrjnList');
+        return $r;
     }
 
     /*
@@ -213,14 +225,6 @@ class UpcRobot {
             return $r;
         }
     }
-
-    /*
-    public function testLibrary() {
-        // 仅供测试
-        return $this->mReader->read($this->getRealUrl('http://i.upc.edu.cn/report/Report-EntryAction.do?reportId=e4827dcc-dc94-469c-9b05-a00b2584b0fa'));
-    }
-     */
-
     
     /*
      *   教务系统
