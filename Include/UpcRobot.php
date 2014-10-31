@@ -3,7 +3,10 @@
  *   UpcRobot.php - 数字石大查询机器人
  *
  *   by: 李思洋
- *   版本: 0.1 (2014.10.24)
+ *   版本: 0.2 (2014.10.31)
+ *
+ *   改动：
+ *   2014-10-31  0.2  支持查询某一周课表，修正小bug
  *
  *   如果无法获取信息，会引发 PageNotFoundException
  *
@@ -256,13 +259,13 @@ class UpcRobot {
         return true;
     }
     
-    public function getTable($term) {
+    public function getTable($term, $week) {
         // 检查是否登录到教务系统
         if (!$this->mIsLogin) return false;
         if (!$this->mIsLoginToJwxt && !$this->loginToJwxt()) return false;
 
         // $term 格式：2014-2015-1
-        $tab = $this->mReader->read('http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKbByXs&istsxx=no&xnxqh='.$term.'&zc=',
+        $tab = $this->mReader->read('http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKbByXs&istsxx=no&xnxqh='.$term.'&zc='.$week,
             array(CURLOPT_COOKIE => $this->mJwxtCookie
         ));
 
@@ -272,7 +275,7 @@ class UpcRobot {
         return $t;
     }
     
-    public function getTableByStu($term, $id) {
+    public function getTableByStu($term, $id, $week) {
         // URL: http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=16
         // 获取方式：POST
         // 格式：usertype=2&xnxqh=2014-2015-1&xsName=%E5%BE%90%E8%BF%8E%E8%8E%B9&abc=1&type=16&zc=&xqid=&selectUrl=queryKbByStudent.jsp&findType=cx&type2=1&xs0101id=1302010205
@@ -282,7 +285,7 @@ class UpcRobot {
         if (!$this->mIsLoginToJwxt && !$this->loginToJwxt()) return false;
 
         // $term 格式：2014-2015-1
-        $tab = $this->mReader->post('http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=16',
+        $tab = $this->mReader->post('http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=16&zc='.$week,
             array(
                 'usertype' => 2,
                 'xnxqh' => $term,
@@ -303,7 +306,7 @@ class UpcRobot {
         return $t;
     }
 
-    public function getTableByClassroom($term, $id) {
+    public function getTableByClassroom($term, $id, $week) {
         // URL: http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=4
         // 获取方式：POST
         // 格式：xnxqh=2014-2015-1&xqid=&gnqid=&jzwid=&classroomID=00305&classname=&abc=1&type=4&zc=&xqid=&selectUrl=queryKbByClassroom.jsp&findType=cx&type2=1
@@ -316,7 +319,7 @@ class UpcRobot {
         if (!$this->mIsLoginToJwxt && !$this->loginToJwxt()) return false;
 
         // $term 格式：2014-2015-1
-        $tab = $this->mReader->post('http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=16',
+        $tab = $this->mReader->post('http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=16&zc='.$week,
             array(
                 'xnxqh' => $term,
 				'classroomID' => $id,
@@ -460,6 +463,7 @@ class UpcRobot {
                 $p = array();
                 foreach ($keyword as $k) {
                     $p[$k] = $m[$k][$i];
+					$p[$k] = str_replace('&nbsp;','',$p[$k]);
                 }
                 array_push($score, $p);
             }

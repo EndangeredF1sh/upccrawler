@@ -59,12 +59,12 @@ class ClassTable {
 
         $orin = str_replace('&nbsp;','',$this->orinText);
         $pattern = '#<tr>.*?<td.*?none;">(.*?)</div.*?/td>.*?<td.*?none;">(.*?)</div.*?/td>.*?<td.*?none;">(.*?)</div.*?/td>.*?<td.*?none;">(.*?)</div.*?/td>.*?<td.*?none;">(.*?)</div.*?/td>.*?<td.*?none;">(.*?)</div.*?/td>.*?<td.*?none;">(.*?)</div.*?/td>.*?</tr>#msi';
-        preg_match_all($pattern, $this->orinText, $tab);
+        preg_match_all($pattern, $orin, $tab);
 
         $this->table = array();
 
         // 提取具体的课程信息
-        $pattern = '#(?P<name>.*?)<br>(?P<class>.*?)<br>(?P<teacher>.*?)<br>(<nobr>){0,1}  (?P<week>.*?)(<nobr>){0,1}<br>(?P<classroom>.*?)<br>.*?<br>#i';
+        $pattern = '#(?P<name>.*?)<br>(?P<class>.*?)<br>(?P<teacher>.*?)<br>(<nobr>){0,1}  (?P<week>.*?)(?:<nobr>){0,1}<br>(?P<classroom>.*?)<br>.*?<br>#i';
         $keywords = array('name','class','teacher','week','classroom');
         for ($day = 1; $day <= 7; $day++) {
             // $day = 1 表示星期日，2 表示星期一……这是由教务系统的输出来决定的。
@@ -90,8 +90,9 @@ class ClassTable {
             }
         }
         
-        // 获取“备注”
-        $pattern = '#备注.*?(.*?)</td>#msi';
+        // 获取备注
+        //$pattern = '#备注.*?(.*?)</td>#msi';
+		$pattern = '#<td   height="28" colspan="7"  align="center">(.*?)</td>#msi';
         preg_match($pattern, $orin, $match);
         $this->memo = isset($match[1])? trim($match[1]):'';
         //$this->memo = $this->orinText;

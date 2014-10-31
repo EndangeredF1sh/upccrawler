@@ -31,7 +31,8 @@ if (isset($method) && !empty($method)) {
             case 'classtable':
                 if (isset($_POST['term']) && !empty($_POST['term'])) {
                     $term=$_POST['term'];
-                    $tab = $r->getTable($term);
+					$week=$_POST['week'];
+                    $tab = $r->getTable($term, $week);
                     echo json_encode(array('status' => 'OK', 'result' => $tab->getTable(), 'memo' => $tab->getMemo()));
                 } else {
                     throw new PageNotFoundException();
@@ -41,17 +42,21 @@ if (isset($method) && !empty($method)) {
             case 'classtablebystu':
                 if (isset($_POST['term']) && !empty($_POST['term'])) {
                     $term=$_POST['term'];
-                    $tab = $r->getTableByStu($term);
+                    $stuid=$_POST['stuid'];
+                    $week=$_POST['week'];
+                    $tab = $r->getTableByStu($term, $stuid, $week);
                     echo json_encode(array('status' => 'OK', 'result' => $tab->getTable(), 'memo' => $tab->getMemo()));
                 } else {
                     throw new PageNotFoundException();
                 }
                 break;
 
-            case 'classtablebyclassroom':
+            case 'classtablebyroom':
                 if (isset($_POST['term']) && !empty($_POST['term'])) {
                     $term=$_POST['term'];
-                    $tab = $r->getTableByClassroom($term);
+                    $roomid=$_POST['roomid'];
+                    $week=$_POST['week'];
+                    $tab = $r->getTableByClassroom($term, $roomid, $week);
                     echo json_encode(array('status' => 'OK', 'result' => $tab->getTable(), 'memo' => $tab->getMemo()));
                 } else {
                     throw new PageNotFoundException();
