@@ -16,6 +16,7 @@ class ClassTable {
     private $table;
     private $list;
     private $memo;
+	private $borrow;
 
     public function __construct($orinText) {
         $this->orinText = $orinText;
@@ -52,6 +53,11 @@ class ClassTable {
     public function getMemo() {
         $this->init1();
         return $this->memo;
+    }
+
+    public function getBorrow() {
+        $this->init1();
+        return $this->borrow;
     }
 
     private function init1() {
@@ -96,6 +102,9 @@ class ClassTable {
         preg_match($pattern, $orin, $match);
         $this->memo = isset($match[1])? trim($match[1]):'';
         //$this->memo = $this->orinText;
+
+		// TODO If it is a tabel for room, get the information of meetings.
+
 
         $this->isInit1 = true;
     }
