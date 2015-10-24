@@ -247,7 +247,7 @@ class UpcRobot {
             $this->mJwxtCookie = $this->extract('/Set\-Cookie: (.*?);/iU', $sys);
 
             // 教务系统登录时要调用一个文件，然后才算做真正登录
-            $this->mReader->post('http://jwxt.upc.edu.cn/jwxt/Logon.do?method=logonBySSO',array(),
+            $this->mReader->post('http://211.87.177.1/jwxt/Logon.do?method=logonBySSO',array(),
                 array(CURLOPT_HTTPHEADER => array('Content-Type: application/x-www-form-urlencoded',
                                                     'Host: 211.87.177.1',
                                                     'Content-Length: 0')
@@ -265,7 +265,7 @@ class UpcRobot {
         if (!$this->mIsLoginToJwxt && !$this->loginToJwxt()) return false;
 
         // $term 格式：2014-2015-1
-        $tab = $this->mReader->read('http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKbByXs&istsxx=no&xnxqh='.$term.'&zc='.$week,
+        $tab = $this->mReader->read('http://211.87.177.1/jwxt/tkglAction.do?method=goListKbByXs&istsxx=no&xnxqh='.$term.'&zc='.$week,
             array(CURLOPT_COOKIE => $this->mJwxtCookie
         ));
 
@@ -276,7 +276,7 @@ class UpcRobot {
     }
     
     public function getTableByStu($term, $id, $week) {
-        // URL: http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=16
+        // URL: http://211.87.177.1/jwxt/tkglAction.do?method=goListKb&type=16
         // 获取方式：POST
         // 格式：usertype=2&xnxqh=2014-2015-1&xsName=%E5%BE%90%E8%BF%8E%E8%8E%B9&abc=1&type=16&zc=&xqid=&selectUrl=queryKbByStudent.jsp&findType=cx&type2=1&xs0101id=1302010205
 
@@ -285,7 +285,7 @@ class UpcRobot {
         if (!$this->mIsLoginToJwxt && !$this->loginToJwxt()) return false;
 
         // $term 格式：2014-2015-1
-        $tab = $this->mReader->post('http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=16&zc='.$week,
+        $tab = $this->mReader->post('http://211.87.177.1/jwxt/tkglAction.do?method=goListKb&type=16&zc='.$week,
             array(
                 'usertype' => 2,
                 'xnxqh' => $term,
@@ -307,7 +307,7 @@ class UpcRobot {
     }
 
     public function getTableByClassroom($term, $id, $week) {
-        // URL: http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=4
+        // URL: http://211.87.177.1/jwxt/tkglAction.do?method=goListKb&type=4
         // 获取方式：POST
         // 格式：xnxqh=2014-2015-1&xqid=&gnqid=&jzwid=&classroomID=00305&classname=&abc=1&type=4&zc=&xqid=&selectUrl=queryKbByClassroom.jsp&findType=cx&type2=1
 		// 教室 ID 如何确定？
@@ -319,7 +319,7 @@ class UpcRobot {
         if (!$this->mIsLoginToJwxt && !$this->loginToJwxt()) return false;
 
         // $term 格式：2014-2015-1
-        $tab = $this->mReader->post('http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=16&zc='.$week,
+        $tab = $this->mReader->post('http://211.87.177.1/jwxt/tkglAction.do?method=goListKb&type=16&zc='.$week,
             array(
                 'xnxqh' => $term,
 				'classroomID' => $id,
@@ -340,7 +340,7 @@ class UpcRobot {
     }
 
     public function getClassrooms() {
-        // URL: http://jwxt.upc.edu.cn/jwxt/tkglAction.do?method=goListKb&type=4
+        // URL: http://211.87.177.1/jwxt/tkglAction.do?method=goListKb&type=4
         // 获取方式：POST
         // 格式：xnxqh=2014-2015-1&xqid=&gnqid=&jzwid=&classroomID=00305&classname=&abc=1&type=4&zc=&xqid=&selectUrl=queryKbByClassroom.jsp&findType=cx&type2=1
 		// 教室 ID 如何确定？
@@ -353,7 +353,7 @@ class UpcRobot {
 		$cnt = 0;
 
 		for ($i=1; $i<=15; $i++) {
-			$tab = $this->mReader->post('http://jwxt.upc.edu.cn/jwxt/ggxx/selectJs.jsp?id=classroomID&name=classname&type=1',
+			$tab = $this->mReader->post('http://211.87.177.1/jwxt/ggxx/selectJs.jsp?id=classroomID&name=classname&type=1',
 				array(
 					'PageNum' => $i
 				),
@@ -385,7 +385,7 @@ class UpcRobot {
             // kksj 表示开课时间，格式为 2014-2015-1（可以为空）
             // 还有一个叫 ok 的，不取任何值
             // 其他参数（kcxz课程性质、kcmc课程名称、xsfs显示方式）暂时忽略不计
-            $page = $this->mReader->post('http://jwxt.upc.edu.cn/jwxt/xszqcjglAction.do?method=queryxscj',
+            $page = $this->mReader->post('http://211.87.177.1/jwxt/xszqcjglAction.do?method=queryxscj',
                 array('kksj' => $term, 'ok'=>'','kcxz'=>'','kcmc'=>'','xsfs'=>'', 'PageNum'=>$i),
                 array(CURLOPT_COOKIE => $this->mJwxtCookie)
             );
@@ -424,7 +424,7 @@ class UpcRobot {
         if (!$this->mIsLoginToJwxt && !$this->loginToJwxt()) return false;
         if (!$this->mIsLogin || !$this->mIsLoginToJwxt) return false;
 
-        $page = $this->mReader->post('http://jwxt.upc.edu.cn/jwxt/xszqcjglAction.do?method=queryxscj',
+        $page = $this->mReader->post('http://211.87.177.1/jwxt/xszqcjglAction.do?method=queryxscj',
             array('kksj' => '2009-2010-1', 'ok'=>'','kcxz'=>'','kcmc'=>'','xsfs'=>''),
             array(CURLOPT_COOKIE => $this->mJwxtCookie)
         );
@@ -506,7 +506,7 @@ class UpcRobot {
      */
 
     private function loginToApp($id) {
-        $url = 'http://i.upc.edu.cn/dcp/forward.action?path=dcp/apps/sso/jsp/ssoDcpSelf&appid='.$id;
+        $url = 'http://i.upc.edu.cn/dcp/forward.action?path=dcp/core/appstore/menu/jsp/redirect&ac=3&appid='.$id;
         $h = array(CURLOPT_HEADER => 1);
 
         // 有时调用要跳转两次，有时是一次，有时直接进入……
