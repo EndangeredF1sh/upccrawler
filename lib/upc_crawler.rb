@@ -128,6 +128,7 @@ class UpcCrawler
 end
 
 # 个人用
+require_relative 'upc_crawler/crap_required_error'
 require_relative 'upc_crawler/login_error'
 require_relative 'upc_crawler/moron_crawler'
 require_relative 'upc_crawler/moron_is_fucked_error'
