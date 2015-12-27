@@ -106,7 +106,7 @@ class UpcCrawler
   ##
   # 强智教务系统
   def moron
-    @moron if defined? @moron
+    return @moron if defined? @moron
     login
     begin
       login_to_app MoronCrawler::APP_ID
