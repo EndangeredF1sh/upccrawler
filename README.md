@@ -1,4 +1,7 @@
-UpcCrawler
+# UpcCrawler (Archieved)
+
+## 原作者 (vjudge0) 停止开发并删库，本fork作存档保留。
+
 ===
 
 一个扒数字石大查课表查成绩查！@＃¥％……&的应用。
